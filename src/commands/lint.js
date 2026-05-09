@@ -22,6 +22,17 @@ function formatLintResult(index, snippet, issues) {
 }
 
 /**
+ * Format a summary line for the lint run.
+ * @param {number} total - total number of snippets checked
+ * @param {number} invalidCount - number of snippets with issues
+ * @returns {string}
+ */
+function formatSummary(total, invalidCount) {
+  const validCount = total - invalidCount;
+  return `  Summary: ${validCount} passed, ${invalidCount} failed (${total} total)`;
+}
+
+/**
  * Main lint command handler.
  * @param {string[]} _args - unused
  * @param {object} options
@@ -48,8 +59,10 @@ async function cmdLint(_args = [], options = {}) {
   for (const [index, issues] of results) {
     log(formatLintResult(index, snippets[index], issues));
   }
+  log('');
+  log(formatSummary(snippets.length, results.size));
 
   return { valid: snippets.length - results.size, invalid: results.size };
 }
 
-module.exports = { cmdLint, formatLintResult };
+module.exports = { cmdLint, formatLintResult, formatSummary };
